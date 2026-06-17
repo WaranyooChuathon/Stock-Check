@@ -1,0 +1,160 @@
+// Prisma 7 schema — StockCheck: generic serialized-asset tracker (PostgreSQL)
+// Verified setup (June 2026): `prisma-client` generator + driver adapters.
+// Postgres gives native enums + Json, so enum-like fields are real enums.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Prisma 7: connection url lives in prisma.config.ts (for Migrate);
+  // the runtime client connects via a driver adapter (src/lib/prisma.ts).
+}
+
+enum UserRole {
+  admin
+  staff
+}
+
+/// สถานะเครื่อง (disposition)
+enum UnitStatus {
+  in_stock // อยู่ในสต็อก
+  lease_or_sold // เช่าซื้อ/ซื้อขาด
+  trial // โครงการทดสอบ
+  repair_lost // ส่งซ่อม/เสีย/สูญหาย
+}
+
+/// สถานะการตรวจยืนยัน
+enum VerifyState {
+  unverified
+  verified
+  discrepancy
+}
+
+enum ChangeAction {
+  import
+  verify
+  edit
+  delete
+  restore
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         UserRole @default(staff)
+  createdAt    DateTime @default(now())
+
+  verifiedUnits Item[] @relation("verifiedBy")
+  deletedUnits  Item[] @relation("deletedBy")
+  changeLogs    ChangeLog[]
+  purges        DeletionArchive[]
+}
+
+/// 1 row = 1 tracked asset/item (any product category — signage, laptop, tool, …).
+model Item {
+  id String @id @default(cuid())
+
+  // 🔒 stable core (logic-bearing). serialNumber is NOT globally unique:
+  // import data is messy (dup/blank S/N). Uniqueness is enforced only among
+  // verified items via a partial unique index added in the migration.
+  serialNumber    String? // S/N จริงของชิ้นงาน
+  boxSerialNumber String? // รหัสรอง/asset tag (เช่น S/N กล่อง/ซอฟต์แวร์) — ไม่นำมาเทียบกับ serialNumber
+  category        String? // หมวดสินค้า (free-form: signage/laptop/tool/furniture/…)
+  status          UnitStatus  @default(in_stock)
+  verifyState     VerifyState @default(unverified)
+  version         Int         @default(0) // optimistic lock
+
+  // typed but default-tunable
+  model       String? // ชื่อ/รุ่นสินค้า
+  location    String? // ตำแหน่งในคลัง
+  boxLocation String? // ตำแหน่งกล่อง/ที่เก็บรอง (ว่าง = ไม่มี/ยังไม่ระบุ)
+
+  // flexible edges — category-specific specs live here
+  // (e.g. signage: { displaySize, macAddress }; laptop: { cpu, ram })
+  attributes    Json? // คอลัมน์เสริม/สเปคเฉพาะหมวด (พ่วงตอน import)
+  accessoryNote String?
+  note          String?
+
+  verifiedById String?
+  verifiedBy   User?     @relation("verifiedBy", fields: [verifiedById], references: [id])
+  verifiedAt   DateTime?
+
+  // soft delete — null = active. Deleted units are hidden from all normal reads
+  // but recoverable from /trash for a retention window, then purged (hard-deleted).
+  deletedAt    DateTime?
+  deletedById  String?
+  deletedBy    User?     @relation("deletedBy", fields: [deletedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  checklist  UnitChecklist[]
+  changeLogs ChangeLog[]
+
+  @@index([verifyState])
+  @@index([status])
+  @@index([deletedAt])
+  @@index([category])
+}
+
+/// Config list of accessories/checks (admin-editable). `category` scopes an item
+/// to one product category; null = applies to all categories.
+model ChecklistItem {
+  id       String  @id @default(cuid())
+  label    String
+  order    Int     @default(0)
+  active   Boolean @default(true)
+  category String? // null = ใช้ทุกหมวด; มีค่า = เฉพาะหมวดนั้น
+
+  units UnitChecklist[]
+}
+
+/// Per-unit result for each checklist item.
+model UnitChecklist {
+  id              String  @id @default(cuid())
+  unitId          String
+  checklistItemId String
+  present         Boolean @default(false)
+
+  unit          Item   @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  checklistItem ChecklistItem @relation(fields: [checklistItemId], references: [id], onDelete: Cascade)
+
+  @@unique([unitId, checklistItemId])
+}
+
+/// Audit trail — every change to a Item writes a row here.
+model ChangeLog {
+  id        String       @id @default(cuid())
+  unitId    String
+  userId    String
+  action    ChangeAction
+  field     String?
+  oldValue  String?
+  newValue  String?
+  createdAt DateTime     @default(now())
+
+  unit Item @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  user User        @relation(fields: [userId], references: [id])
+
+  @@index([unitId])
+}
+
+/// Permanent record of a purged (hard-deleted) unit. A purge cascade-deletes the
+/// unit's ChangeLog/UnitChecklist, so we snapshot the unit here first — this is
+/// both the audit trail for permanent deletions and the last-resort backup.
+model DeletionArchive {
+  id           String   @id @default(cuid())
+  originalId   String // the Item.id that was purged
+  serialNumber String? // denormalised for quick display/search
+  snapshot     Json // full unit row at purge time
+  deletedAt    DateTime? // when it was soft-deleted (start of retention)
+  purgedAt     DateTime @default(now())
+  purgedById   String
+  purgedBy     User     @relation(fields: [purgedById], references: [id])
+
+  @@index([purgedAt])
+}
