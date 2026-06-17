@@ -42,7 +42,7 @@ export async function verifyUnit(
     where: { id: unitId },
     select: { id: true, serialNumber: true, boxSerialNumber: true, verifyState: true },
   });
-  if (!unit) throw new NotFoundError('ไม่พบเครื่องนี้');
+  if (!unit) throw new NotFoundError('ไม่พบรายการนี้');
 
   // Resolve label + active flag for each submitted checklist item.
   const ids = input.checklist.map((c) => c.checklistItemId);
@@ -69,7 +69,7 @@ export async function verifyUnit(
       select: { id: true },
     });
     if (clash) {
-      throw new ConflictError(`S/N ${input.serialNumber} มีเครื่องที่ยืนยันแล้วในระบบ`);
+      throw new ConflictError(`S/N ${input.serialNumber} มีรายการที่ยืนยันแล้วในระบบ`);
     }
   }
 

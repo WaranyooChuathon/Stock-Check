@@ -10,7 +10,7 @@
 export const USER_ROLES = ['admin', 'staff'] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
-/** สถานะเครื่อง (disposition) */
+/** สถานะสินค้า (disposition) */
 export const UNIT_STATUSES = ['in_stock', 'lease_or_sold', 'trial', 'repair_lost'] as const;
 export type UnitStatus = (typeof UNIT_STATUSES)[number];
 

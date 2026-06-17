@@ -49,7 +49,7 @@ export default async function UnitsPage({
           className="rounded-xl border border-dashed border-gray-300 py-12 text-center dark:border-gray-700"
         >
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            ไม่พบเครื่องตามเงื่อนไข
+            ไม่พบสินค้าตามเงื่อนไข
           </p>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">ลองปรับคำค้นหรือตัวกรอง</p>
           <Link

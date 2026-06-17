@@ -28,7 +28,7 @@ export async function bulkDeleteAction(
   const ids = String(formData.get('ids') ?? '')
     .split(',')
     .filter(Boolean);
-  if (ids.length === 0) return { error: 'ยังไม่ได้เลือกเครื่อง' };
+  if (ids.length === 0) return { error: 'ยังไม่ได้เลือกรายการ' };
 
   const deleted = await softDeleteUnits(ids, actorId);
   revalidatePath('/units');

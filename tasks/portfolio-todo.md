@@ -53,11 +53,12 @@
 
 ---
 
-## P5 — Genericize sweep + Polish (AI)
-- [ ] 🤖 **P5.1** grep sweep — ไม่มีชื่อบริษัท/ลูกค้า/พิกัด/อีเมล/secret จริง + ไม่เหลือ symbol signage
-- [ ] 🤖 **P5.2** `README.md` (อังกฤษ) case study: ปัญหา→stack→ฟีเจอร์(generic/category)→architecture(dual-mode)→live URL→demo login→screenshots; ระบุ "ต่อ Neon จริง"
-- [ ] 🤖 **P5.3** `README-TH.md` (ไทย) + สลับภาษา
-- [ ] 🤖 **P5.4** `ARCHITECTURE.md` (ออปชัน) — generic domain + dual-mode + RBAC/audit/soft-delete
+## P5 — Genericize sweep + Polish (AI) ✅ เสร็จ
+- [x] 🤖 **P5.1** sweep: คำว่า "เครื่อง"(device)→"สินค้า/รายการ" ทั้ง UI (คง "เครื่องมือ"=tool); company-safe — ไม่มี PII/อีเมล/secret จริง (เจอแค่ docstring ใน generated client)
+- [x] 🤖 **P5.2** `README.md` (อังกฤษ) case study ครบ: ปัญหา→ฟีเจอร์(generic/category)→stack→dual-mode→demo login→screenshots
+- [x] 🤖 **P5.3** `README-TH.md` (ไทย) + ปุ่มสลับภาษา
+- [x] 🤖 **P5.4** `ARCHITECTURE.md` — dual-mode, generic domain (Item+category+attributes), invariants (audit/optimistic-lock/discrepancy/soft-delete), demo reset
+  - ⚠️ README ลิงก์ `DEPLOY.md` (ยังไม่สร้าง — อยู่ใน P7.2) · old docs (SPEC/AGENTS/tasks เดิม) ยังพูดถึง signage — ลบ/แก้ทีหลังได้ (ไม่ leak บริษัท)
 
 ---
 

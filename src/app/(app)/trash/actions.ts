@@ -23,7 +23,7 @@ export async function restoreAction(_prev: TrashState, formData: FormData): Prom
   const id = await adminId();
   if (!id) return { error: 'เฉพาะผู้ดูแลเท่านั้น' };
   const unitId = String(formData.get('unitId') ?? '');
-  if (!unitId) return { error: 'ไม่พบรหัสเครื่อง' };
+  if (!unitId) return { error: 'ไม่พบรหัสรายการ' };
   try {
     await restoreUnit(unitId, id);
   } catch (e) {
@@ -32,14 +32,14 @@ export async function restoreAction(_prev: TrashState, formData: FormData): Prom
   }
   revalidatePath('/trash');
   revalidatePath('/units');
-  return { ok: true, message: 'กู้คืนเครื่องแล้ว' };
+  return { ok: true, message: 'กู้คืนรายการแล้ว' };
 }
 
 export async function purgeAction(_prev: TrashState, formData: FormData): Promise<TrashState> {
   const id = await adminId();
   if (!id) return { error: 'เฉพาะผู้ดูแลเท่านั้น' };
   const unitId = String(formData.get('unitId') ?? '');
-  if (!unitId) return { error: 'ไม่พบรหัสเครื่อง' };
+  if (!unitId) return { error: 'ไม่พบรหัสรายการ' };
   try {
     await purgeUnit(unitId, id);
   } catch (e) {
@@ -55,5 +55,5 @@ export async function purgeExpiredAction(): Promise<TrashState> {
   if (!id) return { error: 'เฉพาะผู้ดูแลเท่านั้น' };
   const count = await purgeExpired(id);
   revalidatePath('/trash');
-  return { ok: true, message: `ลบถาวรที่ครบกำหนดแล้ว ${count} เครื่อง` };
+  return { ok: true, message: `ลบถาวรที่ครบกำหนดแล้ว ${count} รายการ` };
 }

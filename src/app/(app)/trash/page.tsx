@@ -40,7 +40,7 @@ export default async function TrashPage() {
         </Link>
         <h1 className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">ถังขยะ</h1>
         <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-          เครื่องที่ถูกลบ เก็บไว้ {RETENTION_DAYS} วันก่อนถูกลบถาวร — กู้คืนได้จนกว่าจะครบกำหนด
+          สินค้าที่ถูกลบ เก็บไว้ {RETENTION_DAYS} วันก่อนถูกลบถาวร — กู้คืนได้จนกว่าจะครบกำหนด
         </p>
       </div>
 

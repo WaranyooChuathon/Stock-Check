@@ -365,7 +365,7 @@ export function mockGetUnitsForExport(filters: MockFilters) {
       รุ่น: u.model ?? '',
       สถานะ: u.status,
       การตรวจ: u.verifyState,
-      ตำแหน่งเครื่อง: u.location ?? '',
+      ตำแหน่ง: u.location ?? '',
       ตำแหน่งกล่อง: u.boxLocation ?? '',
       หมายเหตุ: u.note ?? '',
     };

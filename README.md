@@ -1,118 +1,103 @@
-# เช็คสต็อก Smart Signage
+# StockCheck — Serialized Asset Tracker (Live Demo)
 
-เครื่องมือให้ทีมเล็ก (2–3 คน) **เคลียร์/ตรวจนับสต็อกเครื่อง Smart Signage รายตัว** บนมือถือ/แท็บเล็ต/โน้ตบุ๊ก — ติดตามทรัพย์สินรายตัว (S/N, MAC, ขนาดจอ) + workflow ตรวจยืนยันที่จับ "S/N ใส่กล่องผิด / อุปกรณ์ไม่ครบ" อัตโนมัติ
+English · **[ภาษาไทย](README-TH.md)**
 
-> รายละเอียดการออกแบบทั้งหมดอยู่ใน [SPEC.md](SPEC.md) · งาน/แผนใน [tasks/](tasks/)
+> A mobile-first tool for small teams to **count, verify, and audit any serialized inventory** — one physical item per row, with a verification workflow and full change history.
+> **This is a live demo** that opens instantly with no login wall. It runs on a real PostgreSQL database, and falls back to deterministic in-memory data with zero configuration.
 
-## ความสามารถ
+🔗 **Live Demo:** _set after deploy_ — `https://<your-app>.vercel.app`
+🔑 **Demo access:** click **"🚀 เข้าสู่ Live Demo"**, or use `admin` / `admin123` (admin) · `staff` / `staff123` (staff)
+👤 **By:** Waranyoo Chuathon · [GitHub](https://github.com/WaranyooChuathon)
+📐 **Architecture:** see [ARCHITECTURE.md](ARCHITECTURE.md)
 
-- 🔐 ล็อกอิน + แยกสิทธิ์ **admin / staff**
-- 📋 รายการเครื่อง + ค้นหา (S/N, MAC) + กรอง (สถานะ, สถานะการตรวจ, ขนาดจอ)
-- ✅ **ตรวจยืนยันรายตัว** — เทียบ S/N เครื่องกับกล่อง + เช็คอุปกรณ์ → จับ discrepancy อัตโนมัติ
-- ⚠️ หน้า **เครื่องที่มีปัญหา** รวม discrepancy พร้อมเหตุผล
-- 🕑 ประวัติการแก้ไขรายตัว (audit) + **กันการแก้ชนกัน** (optimistic lock)
-- 📥 **นำเข้า Excel/CSV** + จับคู่คอลัมน์เอง (admin)
-- ⚙️ จัดการรายการอุปกรณ์ที่ใช้ตรวจ (admin)
+---
 
-## เทคโนโลยี (verified June 2026)
+## Screenshots
 
-Next.js 16 (App Router) · React 19.2 · TypeScript · Prisma 7 + PostgreSQL · Auth.js v5 · Tailwind CSS 4 · Vitest · Playwright
+| Item list (cards) | Item detail + verify |
+|:--:|:--:|
+| ![Items](docs/screenshots/units-list.png) | ![Detail](docs/screenshots/unit-detail.png) |
 
-## ความต้องการของระบบ
+## Overview
 
-- **Node.js ≥ 20.9**
-- **PostgreSQL** (เช่น เวอร์ชัน 17)
+StockCheck tracks inventory as **individual serialized assets** (1 row = 1 real item), not as bulk quantities.
+Each item has an identity (serial number, category, specs) and a verification state, so a small team can
+walk the shelves, confirm what physically exists against the records, and flag what doesn't.
 
-## ติดตั้งและรัน (จากเครื่องเปล่า)
+It's a **generic** tracker: items belong to a free-form **category** (signage, laptop, power tools,
+furniture, …), and each category carries its own specs (in a JSON `attributes` field) and its own
+verification checklist. The demo is seeded across four categories to show this.
+
+> Origin: adapted from a real internal "Smart Signage stock" tool and generalized into a company-safe
+> portfolio demo — every name, serial, and data point here is synthetic.
+
+## The problem it solves
+
+- **You don't know what you have.** Items drift across states — in stock, leased/sold, on trial, in repair/lost — and physical reality stops matching the spreadsheet.
+- **A flat spreadsheet isn't enough.** It needs per-item identity, a verification trail, and protection against two people editing the same row.
+- **Cleanup must be fast and trustworthy.** Several people verify in parallel; every change is logged; nothing is overwritten silently.
+
+## Features
+
+- **Item list** — search by serial, filter by category / status / verify-state / location, card ⇄ table views with client-side sort, Excel/CSV export.
+- **Per-item verify** — record the real serial, category, status, and a category-scoped accessory checklist; auto-flags **discrepancy** when something is missing.
+- **Problems view** — every flagged item with reasons, ready to chase down.
+- **Excel/CSV import** — upload a sheet and map columns yourself; unmapped columns ride along in `attributes`; messy data (duplicate / blank serials) is imported and flagged, never dropped silently.
+- **Soft delete + trash** — deletes are recoverable for a 30-day retention window, then purged (with a permanent archive snapshot).
+- **Audit log** — every action (import / verify / edit / delete / restore) recorded with who/when, filterable & paginated.
+- **Optimistic locking** — concurrent edits return 409 instead of overwriting.
+- **RBAC** — admin vs staff. **Dark mode**, Thai-time formatting, mobile-first throughout.
+
+## Tech stack
+
+| Layer | Technology |
+|------|-----------|
+| Framework | Next.js 16 (App Router, Turbopack) + React 19 + TypeScript |
+| Database | PostgreSQL via Prisma 7 (driver adapter `@prisma/adapter-pg`) — **Neon** in production |
+| Auth | Auth.js v5 (`next-auth`) — Credentials + JWT |
+| Styling | Tailwind CSS 4 + next-themes (dark mode) |
+| Import/Export | SheetJS (`xlsx`) · Validation: Zod |
+| Tests | Vitest (unit + integration) |
+| Deploy | Vercel (region `sin1`) + Vercel Cron |
+
+## Data architecture (production vs demo)
+
+StockCheck has a **dual-mode data layer**. Every page calls the same service functions in `src/server/*`;
+those services switch on `isDemoMode()`:
+
+```
+DATABASE_URL set   → real Prisma against PostgreSQL (Neon)     ← production
+DATABASE_URL unset → deterministic in-memory mock store        ← CI / local / preview
+```
+
+The mock store mirrors the real query/mutation behaviour (optimistic-lock conflicts, discrepancy rules,
+soft-delete, audit) so the UI is identical either way — the build passes and the app boots with **no secrets
+and no database**. A `/api/demo/reset` endpoint (token-guarded) plus a Vercel Cron re-seed the public demo
+so visitor edits never pile up. See [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Getting started
 
 ```bash
-# 1) ติดตั้ง dependency
 npm install
 
-# 2) สร้างฐานข้อมูล PostgreSQL ชื่อ signage_dev
-#    (ตัวอย่างถ้าใช้ Postgres local, superuser postgres)
-psql -U postgres -c "CREATE DATABASE signage_dev"
+# Quick start — no database needed (in-memory demo data):
+npm run dev          # http://localhost:3000
 
-# 3) ตั้งค่า environment
-cp .env.example .env
-#    แก้ DATABASE_URL ให้ตรงกับ Postgres ของคุณ
-#    สร้าง AUTH_SECRET:  npx auth secret   (หรือใส่สตริงสุ่มเอง)
-
-# 4) สร้างตาราง + ใส่ข้อมูลตัวอย่าง
-npx prisma migrate dev
-npm run db:seed
-
-# 5) รัน dev server → http://localhost:3000
+# With a real database:
+cp .env.example .env            # set DATABASE_URL + AUTH_SECRET
+npx prisma migrate deploy
+npm run db:seed                 # synthetic data across 4 categories
 npm run dev
 ```
 
-### บัญชีทดสอบ (จาก seed)
+Quality gates: `npm run lint` · `npm run typecheck` · `npm run test` · `npm run build`.
 
-| บทบาท | username | password   |
-| ----- | -------- | ---------- |
-| admin | `admin`  | `admin123` |
-| staff | `staff`  | `staff123` |
+## Deploying your own
 
-> ⚠️ เปลี่ยนรหัสผ่านก่อนใช้งานจริง — บัญชี seed สำหรับ dev เท่านั้น
+See **[DEPLOY.md](DEPLOY.md)** for the full runbook (Neon + Vercel). In short: create a personal Neon
+project, push to a new GitHub repo, import it on Vercel, and set `DATABASE_URL`, `DIRECT_DATABASE_URL`,
+`AUTH_SECRET`, and `DEMO_RESET_TOKEN` (or `CRON_SECRET`). `vercel-build` runs the migration automatically.
 
-## คำสั่ง
+---
 
-| คำสั่ง                            | ทำอะไร                                            |
-| --------------------------------- | ------------------------------------------------- |
-| `npm run dev`                     | รัน dev server                                    |
-| `npm run build` / `npm run start` | build / รัน production                            |
-| `npm run lint`                    | ESLint                                            |
-| `npm run typecheck`               | ตรวจชนิดข้อมูล (tsc)                              |
-| `npm run format`                  | จัดรูปแบบด้วย Prettier                            |
-| `npm run test`                    | Vitest (unit + integration — ต้องมี Postgres รัน) |
-| `npm run test:e2e`                | Playwright E2E (mobile viewport)                  |
-| `npm run db:seed`                 | รีเซ็ต + ใส่ข้อมูลตัวอย่าง                        |
-| `npm run db:studio`               | เปิด Prisma Studio ดูข้อมูล                       |
-
-## สิทธิ์การใช้งาน (RBAC)
-
-| ความสามารถ                    | staff | admin |
-| ----------------------------- | :---: | :---: |
-| ดู/ค้นหา/กรองเครื่อง          |  ✅   |  ✅   |
-| ตรวจยืนยัน / แก้ข้อมูลเครื่อง |  ✅   |  ✅   |
-| นำเข้า Excel (`/import`)      |   —   |  ✅   |
-| จัดการอุปกรณ์ (`/settings`)   |   —   |  ✅   |
-
-หน้าเว็บถูกป้องกันด้วย `src/proxy.ts` (redirect ไป `/login`); API ป้องกันด้วย `requireRole()` (คืน 401/403)
-
-## โครงสร้างโดยย่อ
-
-```
-src/
-  auth.ts            Auth.js v5 config
-  proxy.ts           route protection (Next 16)
-  app/(auth)/login   หน้าล็อกอิน
-  app/(app)/         หน้าหลังล็อกอิน: units, units/[id], problems, import, settings
-  app/api/           units (GET), import (POST), auth
-  server/            business logic (verify, update-unit, import, problems, discrepancy, units, checklist)
-  lib/               prisma client, rbac, errors, utils
-  types/             enums + Auth.js type augmentation
-prisma/              schema (PostgreSQL, native enums) + migrations + seed
-tests/               unit / integration (Vitest) + e2e (Playwright)
-```
-
-## Deploy ขึ้น Vercel
-
-1. **ฐานข้อมูล:** สร้าง PostgreSQL บน cloud (Neon / Supabase / Vercel Postgres / Prisma Postgres)
-   - สำหรับ serverless **แนะนำใช้ connection แบบ pooled** (เช่น Neon pooler endpoint) เพื่อกัน connection หมด
-2. **Env vars บน Vercel:**
-   - `DATABASE_URL` = connection **pooled** (Neon: host มี `-pooler`) — แอปใช้ runtime
-   - `DIRECT_DATABASE_URL` = connection **direct/unpooled** (Neon: host ไม่มี `-pooler`) — Prisma Migrate ใช้
-   - `AUTH_SECRET` = สตริงสุ่ม (`npx auth secret` หรือ `openssl rand -base64 33`)
-   - _ไม่ต้องตั้ง `AUTH_URL`/`trustHost`_ — Auth.js v5 ตรวจจับ Vercel อัตโนมัติ
-3. **Build:** Vercel จะรัน script `vercel-build` ให้เอง = `prisma migrate deploy && next build`
-   (และ `postinstall` รัน `prisma generate` ให้ตอน install — เพราะ `src/generated/` ไม่ได้ commit)
-4. **ข้อมูลเริ่มต้น:** หลัง deploy ครั้งแรก สร้าง admin คนแรกด้วยการรัน seed ครั้งเดียว
-   (`DATABASE_URL=<prod> npm run db:seed`) หรือเพิ่มผ่านหน้า `/users` ภายหลัง — **อย่าลืมเปลี่ยนรหัส seed**
-
-> หมายเหตุ: รายละเอียด pooling ของแต่ละผู้ให้บริการต่างกัน — ตรวจกับ docs ของผู้ให้บริการที่เลือกอีกที
-
-## หมายเหตุ
-
-- เก็บรหัสผ่านแบบ hash (bcrypt) เสมอ — ห้าม commit `.env`
-- `serialNumber` ไม่ unique ระดับ DB ทั่วไป แต่ unique เฉพาะกลุ่ม `verified` (partial index) — รองรับข้อมูล import ที่ S/N ซ้ำ/ว่าง โดยติดธง "พบปัญหา"
+_This is a portfolio demo built on synthetic data — it is not connected to any company system._

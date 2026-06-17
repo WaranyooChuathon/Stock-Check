@@ -18,30 +18,30 @@ export default async function HomePage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
-          <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">รายการเครื่อง</h2>
+          <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">รายการสินค้า</h2>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            ค้นหา ตรวจยืนยัน และจัดการเครื่องรายตัว
+            ค้นหา ตรวจยืนยัน และจัดการสินค้ารายตัว
           </p>
           <Link
             href="/units"
             className="mt-3 inline-flex h-11 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600/40"
           >
-            ไปที่รายการเครื่อง
+            ไปที่รายการสินค้า
           </Link>
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
           <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            เครื่องที่มีปัญหา
+            สินค้าที่มีปัญหา
           </h2>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            รวมเครื่องที่ S/N ไม่ตรง หรืออุปกรณ์ไม่ครบ
+            รวมสินค้าที่ S/N ไม่ตรง หรืออุปกรณ์ไม่ครบ
           </p>
           <Link
             href="/problems"
             className="mt-3 inline-flex h-11 items-center rounded-lg border border-gray-300 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600/40 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
           >
-            ดูเครื่องที่มีปัญหา
+            ดูสินค้าที่มีปัญหา
           </Link>
         </div>
 
@@ -111,7 +111,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
             <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">ถังขยะ</h2>
             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-              เครื่องที่ถูกลบ — กู้คืนหรือลบถาวร
+              สินค้าที่ถูกลบ — กู้คืนหรือลบถาวร
             </p>
             <Link
               href="/trash"

@@ -100,7 +100,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
 
       <section className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
         <h2 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-100">
-          แก้ไขข้อมูลเครื่อง
+          แก้ไขข้อมูลสินค้า
         </h2>
         <EditForm
           unitId={unit.id}

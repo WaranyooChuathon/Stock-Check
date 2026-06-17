@@ -32,7 +32,7 @@ export async function getUnitsForExport(filters: UnitFilters): Promise<ExportRow
       รุ่น: u.model ?? '',
       สถานะ: UNIT_STATUS_LABELS[u.status as UnitStatus],
       การตรวจ: VERIFY_STATE_LABELS[u.verifyState as VerifyState],
-      ตำแหน่งเครื่อง: u.location ?? '',
+      ตำแหน่ง: u.location ?? '',
       ตำแหน่งกล่อง: u.boxLocation ?? '',
       หมายเหตุ: u.note ?? '',
     };

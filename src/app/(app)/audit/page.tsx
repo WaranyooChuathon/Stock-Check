@@ -68,7 +68,7 @@ export default async function AuditPage({
           บันทึกการเปลี่ยนแปลง
         </h1>
         <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
-          ประวัติทุกการกระทำกับเครื่อง (นำเข้า/ตรวจ/แก้ไข/ลบ/กู้คืน) — ทั้งหมด {log.total} รายการ
+          ประวัติทุกการกระทำกับสินค้า (นำเข้า/ตรวจ/แก้ไข/ลบ/กู้คืน) — ทั้งหมด {log.total} รายการ
         </p>
       </div>
 

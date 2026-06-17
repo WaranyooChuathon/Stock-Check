@@ -28,7 +28,7 @@ export async function softDeleteUnit(unitId: string, actorUserId: string): Promi
       where: { id: unitId, deletedAt: null },
       data: { deletedAt, deletedById: actorUserId, version: { increment: 1 } },
     });
-    if (res.count === 0) throw new NotFoundError('ไม่พบเครื่อง หรือถูกลบไปแล้ว');
+    if (res.count === 0) throw new NotFoundError('ไม่พบรายการ หรือถูกลบไปแล้ว');
 
     await tx.changeLog.create({
       data: {
@@ -86,7 +86,7 @@ export async function restoreUnit(unitId: string, actorUserId: string): Promise<
       where: { id: unitId, deletedAt: { not: null } },
       data: { deletedAt: null, deletedById: null, version: { increment: 1 } },
     });
-    if (res.count === 0) throw new NotFoundError('ไม่พบเครื่องในถังขยะ');
+    if (res.count === 0) throw new NotFoundError('ไม่พบรายการในถังขยะ');
 
     await tx.changeLog.create({
       data: { unitId, userId: actorUserId, action: 'restore', field: 'deletedAt', newValue: null },
@@ -103,7 +103,7 @@ export async function purgeUnit(unitId: string, actorUserId: string): Promise<vo
   if (isDemoMode()) return mockPurgeUnit(unitId, actorUserId);
   await prisma.$transaction(async (tx) => {
     const unit = await tx.item.findUnique({ where: { id: unitId } });
-    if (!unit) throw new NotFoundError('ไม่พบเครื่องนี้');
+    if (!unit) throw new NotFoundError('ไม่พบรายการนี้');
 
     await tx.deletionArchive.create({
       data: {

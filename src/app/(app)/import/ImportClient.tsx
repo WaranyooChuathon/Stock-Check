@@ -252,7 +252,7 @@ export function ImportClient() {
           <p className="font-medium">นำเข้าเสร็จแล้ว</p>
           <ul className="mt-1 list-inside list-disc">
             <li>ทั้งหมด {report.total} แถว</li>
-            <li>นำเข้าสำเร็จ {report.imported} เครื่อง (สถานะ: ยังไม่ตรวจ)</li>
+            <li>นำเข้าสำเร็จ {report.imported} รายการ (สถานะ: ยังไม่ตรวจ)</li>
             <li>ข้าม (แถวว่าง) {report.skipped} แถว</li>
           </ul>
         </div>

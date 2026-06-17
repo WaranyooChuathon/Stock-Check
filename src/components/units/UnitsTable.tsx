@@ -31,7 +31,7 @@ function BulkDeleteSubmit({ count }: { count: number }) {
       disabled={pending}
       className="h-11 rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600/40 disabled:opacity-60"
     >
-      {pending ? 'กำลังลบ…' : `ยืนยันลบ ${count} เครื่อง`}
+      {pending ? 'กำลังลบ…' : `ยืนยันลบ ${count} รายการ`}
     </button>
   );
 }
@@ -85,7 +85,7 @@ export function UnitsTable({ units, isAdmin = false }: { units: UnitListItem[]; 
       {isAdmin && selected.size > 0 && (
         <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/30">
           <span className="text-sm font-medium text-red-800 dark:text-red-300">
-            เลือก {selected.size} เครื่อง
+            เลือก {selected.size} รายการ
           </span>
           {state.error && (
             <span role="alert" className="text-sm text-red-600 dark:text-red-400">

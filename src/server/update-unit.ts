@@ -37,7 +37,7 @@ export async function updateUnit(
       version: true,
     },
   });
-  if (!current) throw new NotFoundError('ไม่พบเครื่องนี้');
+  if (!current) throw new NotFoundError('ไม่พบรายการนี้');
 
   const diffs: { field: string; oldValue: string | null; newValue: string | null }[] = [];
   if (current.boxSerialNumber !== input.boxSerialNumber)

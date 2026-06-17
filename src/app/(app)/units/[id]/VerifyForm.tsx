@@ -36,7 +36,7 @@ export function VerifyForm(props: VerifyFormProps) {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="serialNumber" className={labelClass}>
-          S/N เครื่อง (จริง)
+          S/N (จริง)
         </label>
         <input
           id="serialNumber"

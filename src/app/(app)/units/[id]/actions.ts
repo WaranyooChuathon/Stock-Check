@@ -39,7 +39,7 @@ export async function verifyAction(
   if (!session?.user) return { error: 'ต้องเข้าสู่ระบบก่อน' };
 
   const unitId = String(formData.get('unitId') ?? '');
-  if (!unitId) return { error: 'ไม่พบรหัสเครื่อง' };
+  if (!unitId) return { error: 'ไม่พบรหัสรายการ' };
 
   const parsed = schema.safeParse({
     serialNumber: formData.get('serialNumber'),
@@ -129,7 +129,7 @@ export async function deleteUnitAction(
   formData: FormData,
 ): Promise<DeleteFormState> {
   const unitId = String(formData.get('unitId') ?? '');
-  if (!unitId) return { error: 'ไม่พบรหัสเครื่อง' };
+  if (!unitId) return { error: 'ไม่พบรหัสรายการ' };
 
   let actorId: string;
   try {
