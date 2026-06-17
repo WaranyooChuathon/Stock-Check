@@ -43,13 +43,13 @@
 
 ---
 
-## P4 — Reset + re-seed (AI) → **CP-C** (ต้องมี DB test)
-- [ ] 🤖 **P4.1** refactor seed → export `seedDemo(prisma)` reuse (CLI + endpoint)
-- [ ] 🤖 **P4.2** `app/api/demo/reset/route.ts` — POST, guard `DEMO_RESET_TOKEN`, เรียก seedDemo (200/401)
-- [ ] 🤖 **P4.3** cron re-seed — เลือกวิธี (แนะนำ Vercel Cron ใน `vercel.json` ยิง endpoint)
-- [ ] 🤖 **P4.4** `components/DemoBanner.tsx` — banner ทุกหน้า + ปุ่ม Reset + ลิงก์ GitHub/resume (dark+mobile)
+## P4 — Reset + re-seed (AI) ✅ เสร็จ → **CP-C**
+- [x] 🤖 **P4.1** แยก `seedDemo` → `src/server/seed-demo.ts` (side-effect-free) + `demo-reset.ts` `resetDemoData()` (demo→resetMockStore / real→seedDemo); prisma/seed.ts = CLI wrapper
+- [x] 🤖 **P4.2** `app/api/demo/reset/route.ts` — GET+POST, guard `DEMO_RESET_TOKEN`/`CRON_SECRET` (Bearer หรือ x-demo-reset-token); 503 ไม่มี token / 401 ผิด / 200 ถูก (มี test 4 เคส)
+- [x] 🤖 **P4.3** Vercel Cron ใน `vercel.json` (`0 */6 * * *` → /api/demo/reset; ใช้ Bearer CRON_SECRET อัตโนมัติ)
+- [x] 🤖 **P4.4** `components/DemoBanner.tsx` ทุกหน้า (root layout) — label + GitHub/Resume + ปุ่ม "↺ Reset demo" (admin, server action) — verified browser
 
-> **CP-C:** ต่อ Neon/local → reset คืน seed, 401 ไม่มี token. → review
+> **CP-C ✅:** test 85/85 · build ผ่าน · browser: banner ทุกหน้า + Reset ทำงาน (ข้อมูลกลับ seed) + 0 console error. ⚠️ ตั้ง Resume URL ใน DemoBanner.tsx (ตอนนี้ชี้ GitHub ชั่วคราว)
 
 ---
 
