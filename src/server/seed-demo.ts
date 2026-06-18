@@ -16,11 +16,25 @@ export async function seedDemo(prisma: PrismaClient): Promise<void> {
   await prisma.checklistItem.deleteMany();
   await prisma.user.deleteMany();
 
+  // Stable ids (not random cuid): a re-seed/reset keeps the same user ids, so an
+  // already-signed-in session never points at a deleted user (which would cause
+  // a foreign-key violation on verifiedById/deletedById when saving). Mirrors the
+  // mock store's fixed ids.
   const admin = await prisma.user.create({
-    data: { username: 'admin', passwordHash: bcrypt.hashSync('admin123', 10), role: 'admin' },
+    data: {
+      id: 'demo-admin',
+      username: 'admin',
+      passwordHash: bcrypt.hashSync('admin123', 10),
+      role: 'admin',
+    },
   });
   await prisma.user.create({
-    data: { username: 'staff', passwordHash: bcrypt.hashSync('staff123', 10), role: 'staff' },
+    data: {
+      id: 'demo-staff',
+      username: 'staff',
+      passwordHash: bcrypt.hashSync('staff123', 10),
+      role: 'staff',
+    },
   });
 
   const checklistId = new Map<string, string>();
