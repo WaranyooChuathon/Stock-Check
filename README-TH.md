@@ -5,7 +5,7 @@
 > เครื่องมือ mobile-first ให้ทีมเล็ก **ตรวจนับ / ยืนยัน / ตรวจสอบย้อนหลังสินค้าหรือทรัพย์สินรายตัว** — 1 แถว = 1 ชิ้นจริง พร้อม workflow การตรวจยืนยันและประวัติการแก้ไขครบถ้วน
 > **นี่คือ live demo** เปิดเล่นได้ทันทีไม่มี login wall · รันบน PostgreSQL จริง และ fallback เป็นข้อมูล in-memory แบบ deterministic โดยไม่ต้องตั้งค่าอะไรเลย
 
-🔗 **Live Demo:** _ใส่หลัง deploy_ — `https://<your-app>.vercel.app`
+🔗 **Live Demo:** **https://stock-check-xi.vercel.app**
 🔑 **เข้าใช้งาน:** กดปุ่ม **"🚀 เข้าสู่ Live Demo"** หรือใช้ `admin` / `admin123` (ผู้ดูแล) · `staff` / `staff123` (พนักงาน)
 👤 **โดย:** Waranyoo Chuathon · [GitHub](https://github.com/WaranyooChuathon)
 📐 **สถาปัตยกรรม:** ดู [ARCHITECTURE.md](ARCHITECTURE.md)

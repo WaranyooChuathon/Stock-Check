@@ -1,79 +1,85 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# StockCheck — project guide (read before exploring)
 
-# This is NOT the Next.js you know
+**StockCheck** is a mobile-first, generic **serialized-asset tracker** (1 row = 1 physical item) with a
+verify/audit workflow. It's a **company-safe portfolio demo** adapted from an internal tool — all data is
+synthetic. Product overview: `README.md`; architecture & decisions: `ARCHITECTURE.md`; deploy: `DEPLOY.md`;
+portfolio plan/spec: `PORTFOLIO-SPEC.md` + `tasks/portfolio-*.md`.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+> ⚠️ This is a recent Next.js (16) / Prisma (7) setup — APIs differ from older training data. Check
+> `node_modules/next/dist/docs/` before writing framework code.
 
-<!-- END:nextjs-agent-rules -->
+## Stack
 
-# Project guide — Check Stock Signage (read this before exploring)
-
-เครื่องมือให้ทีมเล็กเคลียร์/ตรวจนับสต็อกเครื่อง Smart Signage รายตัว (mobile-first).
-รายละเอียดเต็มดู `SPEC.md`; แผนงาน/สถานะดู `tasks/todo.md` + `tasks/plan.md`.
-
-## Stack (verified June 2026 — อย่าถอยเวอร์ชัน)
-
-Next.js 16 (App Router, Turbopack) · React 19.2 · TypeScript · **Prisma 7 + PostgreSQL** · Auth.js v5 (`next-auth@beta`) · Tailwind 4 · next-themes · Vitest + Playwright · xlsx (SheetJS).
+Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · **Prisma 7 + PostgreSQL** (Neon in prod) ·
+Auth.js v5 (`next-auth`) · Tailwind 4 · next-themes · Vitest · SheetJS (`xlsx`) · Zod.
 
 ## Commands
 
-`npm run dev` · `build` · `start` · `lint` · `typecheck` · `format` · `test` (Vitest) · `test:e2e` (Playwright, mobile) · `db:seed` · `db:studio`.
+`npm run dev` · `build` · `start` · `lint` · `typecheck` · `test` (Vitest) · `db:seed` · `db:studio`.
 
-## Directory map (อะไรอยู่ไหน)
+## ⭐ The one rule that shapes everything: dual-mode data layer
+
+Every data function in `src/server/*` branches on `isDemoMode()` (`src/lib/demo.ts`):
+
+```ts
+if (isDemoMode()) return mockX(...);   // in-memory store, no DB  (no DATABASE_URL, or DEMO_MOCK=1)
+return prisma.item.findMany(...);      // real PostgreSQL          (DATABASE_URL set)
+```
+
+So the app builds and runs with **zero config / no DB**. When you add or change a service, you MUST add the
+matching branch in `src/server/mock/store.ts` and keep the return shape identical, or demo mode breaks.
+The seed dataset is shared: `src/server/mock/data.ts` (used by both the mock store and `seedDemo`).
+
+## Directory map
 
 ```
 src/
-  auth.ts                Auth.js v5 config (Credentials + JWT + role/id callbacks; trustHost:true)
+  lib/demo.ts            isDemoMode() — the dual-mode switch
+  lib/prisma.ts rbac.ts session-guard.ts errors.ts datetime.ts ...
+  auth.ts                Auth.js v5 (Credentials + JWT + role/id)
   proxy.ts               route protection (Next 16 replaces middleware; MUST be in src/)
-  app/(auth)/login/      login page + LoginForm (useActionState) + actions
-  app/(app)/             pages หลังล็อกอิน (layout = auth guard + header: BackButton/ThemeToggle/logout)
-    page.tsx             home (เมนูการ์ด; การ์ด admin ใช้ isAdmin)
-    units/               รายการ + ค้นหา/กรอง + ปุ่ม Export
-    units/                รายการ + ค้นหา/กรอง + Export · UnitsView(card/table) · actions.ts=bulkDeleteAction(admin)
-    units/[id]/          detail + VerifyForm + EditForm + ประวัติ + DeleteUnitButton (actions.ts = verify/edit/deleteUnitAction)
-    problems/            หน้าเครื่อง discrepancy
-    trash/               admin: ถังขยะ (soft-deleted) — กู้คืน/ลบถาวร + DeletionArchive (actions.ts = restore/purge/purgeExpired)
-    audit/               admin: บันทึก ChangeLog ทั้งหมด + กรอง action/ผู้ใช้ + pagination
-    import/ settings/ users/   admin-only (guard ด้วย hasRole ในหน้า)
-  app/api/units/         GET list · export/ (xlsx) · auth/[...nextauth] · import/ (POST, admin)
-  server/                business logic (ตรรกะอยู่ที่นี่ ไม่ใช่ในหน้า):
-    discrepancy.ts       evaluateDiscrepancy — pure; discrepancy = อุปกรณ์ active ขาด เท่านั้น
-    verify.ts            verifyUnit (transaction + ChangeLog + serial-conflict guard)
-    update-unit.ts       updateUnit (optimistic lock ด้วย version → 409)
-    delete-unit.ts       soft delete: softDeleteUnit(s)/restoreUnit/purgeUnit/purgeExpired + RETENTION_DAYS(30)
-    units.ts             listUnits/getUnitDetail/buildUnitWhere/listDeletedUnits (buildUnitWhere กรอง deletedAt:null)
-    audit.ts             listAuditLog ({action?,userId?,page}) — paginated ChangeLog
-    import.ts export.ts problems.ts checklist.ts users.ts auth-verify.ts
-  lib/                   prisma.ts (singleton+PrismaPg) · rbac.ts (hasRole) · session-guard.ts (requireRole) · errors.ts · api-auth.ts
-  types/signage.ts       enums + labels (UNIT_STATUS/VERIFY_STATE/USER_ROLE/DISPLAY_SIZES)
-  generated/prisma/      Prisma client (gitignored — `prisma generate` สร้าง)
-prisma/                  schema.prisma · migrations/ · seed.ts
-tests/                   unit/ (pure) · integration/ (ชน DB) · e2e/ (Playwright)
+  server/                business logic — DB/rules live ONLY here
+    units.ts problems.ts audit.ts export.ts verify.ts update-unit.ts import.ts
+    delete-unit.ts checklist.ts users.ts auth-verify.ts discrepancy.ts(pure)
+    seed-demo.ts         seedDemo(prisma) — real-DB seed (side-effect-free; reused by reset)
+    demo-reset.ts        resetDemoData() — mock reset OR seedDemo, by mode
+    mock/data.ts         shared deterministic dataset (4 categories)
+    mock/store.ts        in-memory store + mockX() for every service
+  app/(auth)/login/      login + "🚀 เข้าสู่ Live Demo" (enterDemo action)
+  app/(app)/             authed pages: units · units/[id] · problems · import · settings · users · trash · audit
+  app/api/units/ import/ auth/   route handlers
+  app/api/demo/reset/    token-guarded re-seed (Vercel Cron)
+  app/demo-actions.ts    resetDemoAction (admin) for the banner button
+  components/DemoBanner.tsx  Live-Demo bar + Reset (in root layout)
+  types/inventory.ts     enums + Thai labels
+  generated/prisma/      Prisma client (gitignored — `prisma generate`)
+prisma/                  schema.prisma · migrations/ · seed.ts (CLI wrapper)
+tests/                   unit/ (pure + mock) · integration/ (hits DB)
 ```
+
+## Domain model (`Item`)
+
+- 🔒 **stable core:** `serialNumber` (unique only among `verified` — partial index), `status`, `verifyState`, `version` (optimistic lock), `category` (free-form: signage/laptop/tool/…).
+- 🧩 **generic optional:** `model`, `location`, `boxSerialNumber` (secondary code/asset tag), `boxLocation`, `note`.
+- 🔧 **flexible:** `attributes` (JSON) = category-specific specs (e.g. signage `{displaySize, macAddress}`). **Logic-bearing fields are never stored in JSON.**
+- `ChecklistItem.category` scopes a check to a category (null = all). **discrepancy = a recorded active checklist item is missing** (not S/N). `deletedAt` = soft delete.
 
 ## Conventions
 
-- **TDD**: เขียน test ก่อน (RED→GREEN). logic ใหม่ → server service + test.
-- **Server services pattern**: ตรรกะ DB/ธุรกิจอยู่ใน `src/server/*`; pages/route handlers แค่เรียกใช้.
-- **RBAC**: pages admin guard ด้วย `hasRole(session?.user?.role,['admin'])`; API guard ด้วย `requireRole([...])` → 401/403 (`authErrorResponse`).
-- **ทุกการแก้ SignageUnit เขียน ChangeLog** ใน transaction เดียวกัน.
-- **Mobile-first + dark mode**: ทุก surface ต้องมี `dark:` variants; touch ≥44px.
-- **ห้าม auto-commit git** — บอกผู้ใช้แล้วผู้ใช้ commit เอง.
+- **Server-service pattern:** pages/route handlers stay thin → call `src/server/*`. **Every `Item` mutation writes a `ChangeLog` in the same transaction.**
+- **RBAC:** pages `hasRole(...)`; API/services `requireRole(...)` → 401/403.
+- **Mobile-first + dark mode** on every surface (`dark:` variants, touch ≥44px). UI text **Thai**; code/comments English.
+- **TDD:** new logic → server service + test (mock tests need no DB; integration tests need `DATABASE_URL`).
 
-## Domain model essentials (`SignageUnit`)
+## Gotchas
 
-- `serialNumber` = S/N เครื่องจริง · `boxSerialNumber` = **"S/N Software"** (Software Setup Number — label เดิม "S/N กล่อง"; **ไม่นำมาเทียบกับ serialNumber**)
-- `verifyState`: `unverified | verified | discrepancy`. **discrepancy = อุปกรณ์ active ขาด เท่านั้น** (ไม่ใช่ S/N)
-- `status`: `in_stock | lease_or_sold | trial | repair_lost` · `location` (เครื่อง) · `boxLocation` (กล่อง) · `note` (หมายเหตุ) · `version` (optimistic lock) · `attributes` (Json จาก import)
-- `deletedAt`/`deletedById` = **soft delete** (null = active). ทุก read ปกติกรอง `deletedAt:null` (ผ่าน buildUnitWhere/getUnitDetail/problems). purge = hard delete + snapshot ลง `DeletionArchive`
-- ChecklistItem (admin แก้ได้) + UnitChecklist (ผลตรวจต่อเครื่อง) · ChangeLog (audit; action: import/verify/edit/delete/restore)
+- **Run tests against local Postgres**, not Neon: `$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/stockcheck_dev?schema=public"; npm run test`.
+- **Prisma 7:** no engine — client via driver adapter (`PrismaPg`); Migrate URL in `prisma.config.ts`; client output `src/generated/prisma`. `serialNumber` partial-unique index is raw SQL in the migration.
+- **Next 16:** `params`/`searchParams`/`cookies()` are Promises (await); route protection is `src/proxy.ts`.
+- **Demo reset:** `/api/demo/reset` needs a token (`DEMO_RESET_TOKEN` or `CRON_SECRET`). Vercel **Hobby** cron = once/day (`vercel.json` `0 0 * * *`).
 
-## Gotchas สำคัญ (อย่าลืม)
+## Boundaries (this is a portfolio demo)
 
-- **DB: dev ใช้ Postgres local, prod ใช้ Neon** — ตอน dev/test สลับ `.env` `DATABASE_URL` เป็น local ไม่งั้นช้า/test พังเพราะชน Neon. รัน test: `$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/signage_dev?schema=public"; npm run test`.
-- **Prisma 7**: ไม่มี `url` ใน schema — อยู่ใน `prisma.config.ts` (`DIRECT_DATABASE_URL ?? DATABASE_URL`). ต้องใช้ driver adapter (PrismaPg). `serialNumber` unique เฉพาะกลุ่ม `verified` (partial index ใน migration).
-- **Migration บน prod**: rename/เปลี่ยนความหมายให้คงคอลัมน์เดิม (อย่า migrate ที่กระทบข้อมูล prod). migration จริงรันชี้ local เท่านั้น; Vercel รัน `migrate deploy` ตอน deploy.
-- **Next 16**: `params`/`searchParams`/`cookies()` เป็น Promise (await); `proxy.ts` (ไม่ใช่ middleware) อยู่ใน `src/`.
-- **Vercel**: region `sin1` (`vercel.json`) อยู่ region เดียวกับ Neon สิงคโปร์ (ไม่งั้นช้า); ต้องตั้ง `DATABASE_URL`(pooled), `DIRECT_DATABASE_URL`(direct), `AUTH_SECRET`.
-- **Auth.js**: `trustHost:true` (จำเป็นตอน self-host/local prod); seed: admin/admin123, staff/staff123.
-- **Soft delete**: อย่าลืมกรอง `deletedAt:null` ในทุก read ใหม่ที่ query `SignageUnit` (ไม่งั้นเครื่องที่ลบจะโผล่). purge = hard delete → ChangeLog/UnitChecklist ของตัวนั้นถูก cascade ลบ (ตั้งใจ; หลักฐานอยู่ `DeletionArchive`). retention 30 วัน เป็น **manual** (ไม่มี cron) — purge ทำผ่านหน้า /trash. รัน migration ใหม่ต้อง override env เป็น local ก่อน (`$env:DIRECT_DATABASE_URL` + `DATABASE_URL`) ห้ามชน Neon.
+- **Company-safe:** synthetic data only — never add real names/serials/locations/emails.
+- **Never commit** `.env`/secrets/tokens (only `.env.example` is tracked).
+- **No auto-commit/push/deploy** — tell the user; they commit themselves.

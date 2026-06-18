@@ -62,23 +62,29 @@
 
 ---
 
-## P6 — Verify + Screenshots (AI) → **CP-D**
-- [ ] 🤖 **P6.1** `/verify` browser ทุกหน้า + หลายหมวดสินค้า render ถูก
-- [ ] 🤖 **P6.2** screenshot หน้าเด่น → `docs/` + ฝัง README
+## P6 — Verify + Screenshots (AI) ✅ เสร็จ → **CP-D**
+- [x] 🤖 **P6.1** verify browser ทุกหน้า (login/home/units card+table/detail+verify/problems/import/settings/users/trash/audit) — render ถูก, **0 console error**, mock data ครบ 4 หมวด
+- [x] 🤖 **P6.2** screenshot (units-list/unit-detail/problems) → `docs/screenshots/` + ฝังใน README
 
-> **CP-D:** screenshot ครบ + README สมบูรณ์ → review ก่อน deploy
+> **CP-D ✅:** ทุกหน้าทำงานในโหมด mock, README มีภาพ. → ก่อน deploy
 
 ---
 
 ## P7 — Deploy: Neon + Vercel (USER+AI) → **CP-E**
 - [ ] 🧑 **P7.1** สร้าง Neon project ส่วนตัวใหม่ (sin1) → `DATABASE_URL`(pooled) + `DIRECT_DATABASE_URL`(direct)
-- [ ] 🤖 **P7.2** `DEPLOY.md` runbook — ขั้น USER + ลำดับ migrate/seed/env + secret scan
-- [ ] 🤖 **P7.3** secret scan git history/working tree ก่อน push
-- [ ] 🧑 **P7.4** GitHub repo + Vercel + env 4 ตัว (DATABASE_URL, DIRECT_DATABASE_URL, AUTH_SECRET, DEMO_RESET_TOKEN)
-- [ ] 🧑⛔ **P7.5** `git push` + deploy (`vercel-build` รัน migrate; seed ครั้งแรกผ่าน reset/CLI)
-- [ ] 🤖 **P7.6** verify live: URL จริง → "เข้าสู่ Live Demo" + Reset + ทุกหน้า
+- [x] 🤖 **P7.2** `DEPLOY.md` runbook (Neon+Vercel, env table, migrate/seed, cron secret, rollback)
+- [x] 🤖 **P7.3** secret scan — `.env` ไม่ถูก track (มีแค่ .env.example); ไม่มี secret จริงใน tree (เจอแค่ DSN local placeholder ใน AGENTS.md เก่า — ไม่ใช่ secret/ไม่มีชื่อบริษัท)
+- [x] 🧑 **P7.4** GitHub repo + Vercel + env ครบ
+- [x] 🧑⛔ **P7.5** deploy แล้ว → https://stock-check-xi.vercel.app (migrate + seed บน Neon สำเร็จ)
+- [x] 🤖 **P7.6** verify live: "เข้าสู่ Live Demo" + units(14/4หมวด, cuid id=Neon จริง) + detail(discrepancy/attributes/เวลาไทย) + 0 console error
 
-> **CP-E:** live demo เปิดได้, generic + full-stack Neon, company-safe ✅
+> **CP-E ✅:** live demo เปิดได้, generic + full-stack Neon, company-safe — **จบครบทุก phase** 🏁
+>
+> เหลือแต่งหน้าร้าน (ออปชัน): Resume URL ใน DemoBanner (ตอนนี้ชี้ GitHub) · live URL ใน README
+
+## ทำความสะอาดเสริม (playbook ขั้น 9) ✅ เสร็จ
+- [x] ลบ docs โปรดักต์เดิม: `SPEC.md`, `tasks/plan.md`, `tasks/todo.md`, `docs/ideas/`
+- [x] เขียน `AGENTS.md` ใหม่เป็นคู่มือ StockCheck demo (CLAUDE.md โหลด `@AGENTS.md`) — context + dual-mode rule + structure + boundaries (company-safe/no-commit)
 
 ---
 

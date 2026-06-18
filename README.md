@@ -5,7 +5,7 @@ English · **[ภาษาไทย](README-TH.md)**
 > A mobile-first tool for small teams to **count, verify, and audit any serialized inventory** — one physical item per row, with a verification workflow and full change history.
 > **This is a live demo** that opens instantly with no login wall. It runs on a real PostgreSQL database, and falls back to deterministic in-memory data with zero configuration.
 
-🔗 **Live Demo:** _set after deploy_ — `https://<your-app>.vercel.app`
+🔗 **Live Demo:** **https://stock-check-xi.vercel.app**
 🔑 **Demo access:** click **"🚀 เข้าสู่ Live Demo"**, or use `admin` / `admin123` (admin) · `staff` / `staff123` (staff)
 👤 **By:** Waranyoo Chuathon · [GitHub](https://github.com/WaranyooChuathon)
 📐 **Architecture:** see [ARCHITECTURE.md](ARCHITECTURE.md)
