@@ -36,6 +36,12 @@ export async function DemoBanner() {
       >
         Resume
       </a>
+      <a
+        href="/showcase"
+        className="underline underline-offset-2 hover:text-amber-700 dark:hover:text-amber-200"
+      >
+        📱 Tablet view
+      </a>
       {isAdmin && (
         <form action={resetDemoAction}>
           <button

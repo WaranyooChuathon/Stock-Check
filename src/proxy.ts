@@ -7,5 +7,6 @@ export { auth as proxy } from '@/auth';
 export const config = {
   // Protect pages only. API routes are excluded so they can self-guard with
   // requireRole() and return proper 401/403 JSON instead of an HTML redirect.
-  matcher: ['/((?!api|login|_next/static|_next/image|favicon.ico).*)'],
+  // `showcase` is the public device-frame wrapper — the framed app self-auths.
+  matcher: ['/((?!api|login|showcase|_next/static|_next/image|favicon.ico).*)'],
 };

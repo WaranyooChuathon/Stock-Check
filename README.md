@@ -7,6 +7,7 @@ English · **[ภาษาไทย](README-TH.md)**
 
 🔗 **Live Demo:** **https://stock-check-xi.vercel.app**
 🔑 **Demo access:** click **"🚀 เข้าสู่ Live Demo"**, or use `admin` / `admin123` (admin) · `staff` / `staff123` (staff)
+📱 **Tablet showcase:** open **`/showcase`** (or the "📱 Tablet view" link) to use the app inside a tablet bezel — switch between 8.8"/11"/web and rotate, mirroring how it runs in the field.
 👤 **By:** Waranyoo Chuathon · [GitHub](https://github.com/WaranyooChuathon)
 📐 **Architecture:** see [ARCHITECTURE.md](ARCHITECTURE.md)
 

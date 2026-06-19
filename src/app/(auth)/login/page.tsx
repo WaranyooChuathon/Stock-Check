@@ -45,6 +45,13 @@ export default async function LoginPage() {
             บัญชีทดสอบ: admin / admin123 · staff / staff123
           </p>
         </div>
+
+        <a
+          href="/showcase"
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium text-gray-500 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+        >
+          📱 ดูแบบ Tablet
+        </a>
       </div>
     </main>
   );
