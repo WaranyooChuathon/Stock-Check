@@ -13,13 +13,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { name, role } = session.user;
 
   return (
-    <div className="min-h-dvh bg-gray-50 dark:bg-gray-950">
-      <header className="sticky top-0 z-10 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <div className="min-h-dvh bg-gray-50 dark:bg-slate-950">
+      {/* Sticky, but pinned BELOW the demo banner (root layout, sticky top-0, ~34px)
+          instead of top-0, so the two bars stack instead of overlapping on scroll. */}
+      <header className="sticky top-8.5 z-10 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <BackButton />
-            <Link href="/" className="font-semibold text-gray-900 dark:text-gray-100">
-              StockCheck
+            <Link href="/" className="flex items-baseline gap-1.5">
+              <span className="font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                Assay
+              </span>
+              <span className="hidden text-xs text-gray-400 sm:inline dark:text-gray-500">
+                Check Stock
+              </span>
             </Link>
           </div>
           <div className="flex items-center gap-2.5">

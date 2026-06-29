@@ -1,4 +1,4 @@
-# StockCheck — ระบบตรวจนับทรัพย์สินรายตัว (Live Demo)
+# Assay — ระบบตรวจนับทรัพย์สินรายตัว (Live Demo)
 
 [English](README.md) · **ภาษาไทย**
 
@@ -20,7 +20,7 @@
 
 ## ภาพรวม
 
-StockCheck ติดตามสต็อกแบบ **ทรัพย์สินรายตัว (serialized)** — 1 แถว = 1 ชิ้นจริง ไม่ใช่การนับจำนวนกอง
+Assay ติดตามสต็อกแบบ **ทรัพย์สินรายตัว (serialized)** — 1 แถว = 1 ชิ้นจริง ไม่ใช่การนับจำนวนกอง
 แต่ละชิ้นมีตัวตน (S/N, หมวด, สเปค) และสถานะการตรวจ ทีมจึงเดินเคลียร์ของจริงให้ตรงกับข้อมูล และติดธงตัวที่ไม่ตรงได้
 
 เป็นระบบ **generic** — สินค้าจัดอยู่ใน **หมวด (category)** แบบพิมพ์เองได้ (signage, laptop, เครื่องมือช่าง, เฟอร์นิเจอร์, …)
@@ -59,7 +59,7 @@ StockCheck ติดตามสต็อกแบบ **ทรัพย์สิ
 
 ## สถาปัตยกรรมข้อมูล (prod vs demo)
 
-StockCheck ใช้ **dual-mode data layer** — ทุกหน้าเรียก service ใน `src/server/*` ชุดเดียวกัน ซึ่งสลับด้วย `isDemoMode()`:
+Assay ใช้ **dual-mode data layer** — ทุกหน้าเรียก service ใน `src/server/*` ชุดเดียวกัน ซึ่งสลับด้วย `isDemoMode()`:
 
 ```
 มี DATABASE_URL   → Prisma จริงบน PostgreSQL (Neon)        ← production
@@ -81,7 +81,7 @@ npm run dev          # http://localhost:3000
 # ต่อ DB จริง:
 cp .env.example .env            # ตั้ง DATABASE_URL + AUTH_SECRET
 npx prisma migrate deploy
-npm run db:seed                 # ข้อมูลสมมติ 4 หมวด
+npm run db:seed                 # ข้อมูลตัวอย่างเพื่อการสาธิต 4 หมวด
 npm run dev
 ```
 
@@ -95,4 +95,4 @@ import บน Vercel, ตั้ง `DATABASE_URL`, `DIRECT_DATABASE_URL`, `AUTH_
 
 ---
 
-_เป็น portfolio demo บนข้อมูลสมมติ — ไม่ได้เชื่อมต่อระบบของบริษัทใด_
+_เป็น portfolio demo บนข้อมูลตัวอย่างเพื่อการสาธิต — ไม่ได้เชื่อมต่อระบบของบริษัทใด_

@@ -5,6 +5,7 @@ import { parseUnitFilters } from '@/lib/unit-filters';
 import { listUnits, listCategories } from '@/server/units';
 import { UnitsView } from '@/components/units/UnitsView';
 import { UnitFiltersForm } from '@/components/units/UnitFiltersForm';
+import { DownloadIcon } from '@/components/icons';
 
 export default async function UnitsPage({
   searchParams,
@@ -35,9 +36,10 @@ export default async function UnitsPage({
         </div>
         <a
           href={exportHref}
-          className="inline-flex h-10 shrink-0 items-center rounded-lg border border-gray-300 px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600/40 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+          className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-gray-300 px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600/40 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
         >
-          ⬇ Export
+          <DownloadIcon className="h-4 w-4" />
+          Export
         </a>
       </div>
 

@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-25T00:00:00.000Z",
+  "title": "Design System: StockCheck",
+  "extensions": {
+    "colorMeta": {
+      "instrument-blue": {
+        "role": "primary",
+        "displayName": "Instrument Blue",
+        "canonical": "#2563eb",
+        "tonalRamp": ["#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#dbeafe"]
+      },
+      "verified-green": {
+        "role": "secondary",
+        "displayName": "Verified Green",
+        "canonical": "#16a34a",
+        "tonalRamp": ["#052e16", "#14532d", "#15803d", "#16a34a", "#22c55e", "#4ade80", "#86efac", "#dcfce7"]
+      },
+      "discrepancy-red": {
+        "role": "secondary",
+        "displayName": "Discrepancy Red",
+        "canonical": "#dc2626",
+        "tonalRamp": ["#450a0a", "#7f1d1d", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fee2e2"]
+      },
+      "signal-amber": {
+        "role": "tertiary",
+        "displayName": "Signal Amber",
+        "canonical": "#f59e0b",
+        "tonalRamp": ["#451a03", "#78350f", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fcd34d", "#fde68a"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111827",
+        "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#6b7280", "#9ca3af", "#d1d5db", "#f3f4f6"]
+      }
+    },
+    "typographyMeta": {
+      "page-title": { "displayName": "Page Title", "purpose": "One per screen — page and greeting headers." },
+      "body": { "displayName": "Body", "purpose": "Default reading text; prose capped at 65–75ch." },
+      "label": { "displayName": "Label", "purpose": "Form labels, button text, secondary metadata." },
+      "mono": { "displayName": "Mono", "purpose": "Serial numbers, asset codes, MAC addresses, IDs (Geist Mono)." }
+    },
+    "shadows": [
+      { "name": "card-lift", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Resting elevation for cards and inputs — the only at-rest shadow." },
+      { "name": "device-bezel", "value": "0 25px 50px -12px rgb(0 0 0 / 0.25)", "purpose": "Showcase tablet bezel only; reads as physical hardware." }
+    ],
+    "motion": [
+      { "name": "ease-out-quart", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "Default easing for state transitions; no bounce." },
+      { "name": "duration-standard", "value": "200ms", "purpose": "Most hover/focus/state transitions (product range 150–250ms)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single filled action per screen.",
+      "html": "<button class=\"ds-btn-primary\">เข้าสู่ระบบ</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 16px; background: #2563eb; color: #fff; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; border: none; border-radius: 8px; cursor: pointer; transition: background 200ms cubic-bezier(0.25,1,0.5,1); } .ds-btn-primary:hover { background: #1d4ed8; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(37 99 235 / 0.4); } .ds-btn-primary:active { background: #1e40af; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Lower-emphasis action; bordered, no fill.",
+      "html": "<button class=\"ds-btn-secondary\">ยกเลิก</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 16px; background: #fff; color: #374151; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; transition: background 200ms cubic-bezier(0.25,1,0.5,1); } .ds-btn-secondary:hover { background: #f9fafb; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(37 99 235 / 0.4); }"
+    },
+    {
+      "name": "Verify State Badge",
+      "kind": "chip",
+      "refersTo": "badge-verified",
+      "description": "Status pill; color always paired with a text label.",
+      "html": "<span class=\"ds-badge-verified\">ยืนยันแล้ว</span>",
+      "css": ".ds-badge-verified { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 9999px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; } .ds-badge-verified::before { content: \"\"; width: 6px; height: 6px; border-radius: 9999px; background: #16a34a; }"
+    },
+    {
+      "name": "Discrepancy Badge",
+      "kind": "chip",
+      "refersTo": "badge-discrepancy",
+      "description": "Discrepancy state pill.",
+      "html": "<span class=\"ds-badge-discrepancy\">พบความไม่ตรง</span>",
+      "css": ".ds-badge-discrepancy { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; border-radius: 9999px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; } .ds-badge-discrepancy::before { content: \"\"; width: 6px; height: 6px; border-radius: 9999px; background: #dc2626; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard text field; border shifts to Instrument Blue on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"ค้นหาด้วยซีเรียล…\" />",
+      "css": ".ds-input { width: 100%; height: 44px; padding: 0 12px; background: #fff; color: #111827; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 1rem; border: 1px solid #d1d5db; border-radius: 8px; transition: border-color 200ms cubic-bezier(0.25,1,0.5,1), box-shadow 200ms cubic-bezier(0.25,1,0.5,1); } .ds-input::placeholder { color: #6b7280; } .ds-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgb(37 99 235 / 0.4); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Content container; flat, separated by a 1px border and a whisper shadow.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">รายการสินค้า</h3><p class=\"ds-card-body\">ค้นหา ตรวจยืนยัน และจัดการสินค้ารายตัว</p></div>",
+      "css": ".ds-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); font-family: Geist, ui-sans-serif, system-ui, sans-serif; } .ds-card-title { margin: 0 0 4px; font-size: 1.125rem; font-weight: 600; color: #111827; } .ds-card-body { margin: 0; font-size: 0.875rem; color: #4b5563; }"
+    },
+    {
+      "name": "Serial Number (Mono)",
+      "kind": "custom",
+      "refersTo": "mono",
+      "description": "Machine-assigned codes set in Geist Mono so digits align and 0/O, 1/l stay legible.",
+      "html": "<code class=\"ds-serial\">SN-2026-0XA7-3391</code>",
+      "css": ".ds-serial { font-family: \"Geist Mono\", ui-monospace, SFMono-Regular, monospace; font-size: 0.875rem; color: #374151; letter-spacing: 0.01em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Field Instrument",
+    "overview": "StockCheck is a precise handheld instrument, not a dashboard to admire. Picture a calibrated tool held in one hand on a stockroom floor: the reading is unambiguous, the controls are exactly where the thumb expects them, and nothing on the face is there for decoration. The system is calm, precise, and trustworthy — quiet by default so the one thing that matters (verified? discrepancy?) is the loudest thing on screen. Color is rationed: a confident Instrument Blue carries action and focus; green and red are reserved strictly for verify state; everything else is cool neutral gray layered tonally for depth. Flat at rest, single tuned sans (Geist) at a fixed rem scale.",
+    "keyCharacteristics": [
+      "Calm density: show what the task needs, nothing more.",
+      "One confident accent (Instrument Blue) for action + focus; color otherwise means state.",
+      "Flat-by-default; depth via tonal gray layering and 1px borders, not shadows.",
+      "Field-first: touch targets ≥44px, glanceable status, full light/dark parity.",
+      "Tactile & confident controls — clear hover/active/focus feedback, never flashy."
+    ],
+    "rules": [
+      { "name": "The State-Color Rule", "body": "Green and red mean exactly one thing each: verified and discrepancy. Forbidden as decoration, emphasis, or category color.", "section": "colors" },
+      { "name": "The One Accent Rule", "body": "Instrument Blue covers ≤10% of a screen — one primary button, the active nav item, the focus ring. A second blue button on the same screen means one is wrong.", "section": "colors" },
+      { "name": "The Fixed-Scale Rule", "body": "Sizes are fixed rem, never clamp()/fluid. A heading must not shrink in a sidebar or inside the tablet frame.", "section": "typography" },
+      { "name": "The Mono-for-Machines Rule", "body": "Anything a machine assigned (S/N, asset tag, MAC, ID) is set in Geist Mono; anything a human wrote is set in Geist Sans.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. To separate two panels, use a border or a tonal step, not a shadow. Shadow is for physical objects (the bezel) and nothing else.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Instrument Blue (#2563eb) to ≤10% of a screen — one primary action, the active nav item, the focus ring.",
+      "Do reserve green/red strictly for verified / discrepancy state, always paired with a text label for color-vision safety.",
+      "Do separate panels with 1px borders and tonal gray steps; stay flat (only shadow-sm at rest).",
+      "Do keep every touch target ≥44px and every interactive element with visible hover + focus + active states.",
+      "Do set serial numbers, asset codes, and IDs in Geist Mono.",
+      "Do maintain full light/dark parity and ≥4.5:1 body contrast (≥3:1 large), placeholders included."
+    ],
+    "donts": [
+      "Don't drift toward enterprise-bloat (SAP-style): no cramped gray density, deeply nested menus, sub-44px controls, or modal-on-modal.",
+      "Don't adopt the generic AI-SaaS template look: no cream/sand body background, no gradient text, no hero-metric block, no identical icon-card grids, no uppercase tracked eyebrow over every section.",
+      "Don't use border-left/border-right >1px as a colored accent stripe; use full borders, background tints, or a leading icon.",
+      "Don't use glassmorphism as decoration, or shadows to fake separation.",
+      "Don't use clamp()/fluid type in product UI, or pair a second font family with Geist.",
+      "Don't let body text fall back to Arial — wire --font-geist-sans onto body in globals.css.",
+      "Don't convey status by color alone, and never remove focus outlines."
+    ]
+  }
+}

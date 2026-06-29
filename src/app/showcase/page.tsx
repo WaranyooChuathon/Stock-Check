@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { ShowcaseFrame } from './ShowcaseFrame';
 
 export const metadata: Metadata = {
-  title: 'StockCheck — มุมมองแท็บเล็ต',
-  description: 'จำลองการใช้งาน StockCheck บนแท็บเล็ต/iPad',
+  title: 'Assay — มุมมองแท็บเล็ต',
+  description: 'จำลองการใช้งาน Assay บนแท็บเล็ต/iPad',
 };
 
 /**

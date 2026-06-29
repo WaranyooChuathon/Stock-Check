@@ -1,4 +1,4 @@
-# StockCheck — Serialized Asset Tracker (Live Demo)
+# Assay — Serialized Asset Tracker (Live Demo)
 
 English · **[ภาษาไทย](README-TH.md)**
 
@@ -6,8 +6,9 @@ English · **[ภาษาไทย](README-TH.md)**
 > **This is a live demo** that opens instantly with no login wall. It runs on a real PostgreSQL database, and falls back to deterministic in-memory data with zero configuration.
 
 🔗 **Live Demo:** **https://stock-check-xi.vercel.app**
-🔑 **Demo access:** click **"🚀 เข้าสู่ Live Demo"**, or use `admin` / `admin123` (admin) · `staff` / `staff123` (staff)
-📱 **Tablet showcase:** open **`/showcase`** (or the "📱 Tablet view" link) to use the app inside a tablet bezel — switch between 8.8"/11"/web and rotate, mirroring how it runs in the field.
+🔑 **Demo access:** click **"เข้าสู่ Live Demo"** for instant admin access, or sign in with `admin` / `admin123` (admin) · `staff` / `staff123` (staff)
+🟢 **Live banner:** a persistent top bar (on every screen) carries a green **"connected to Neon"** indicator — the deployed demo runs on real Postgres — plus source / showcase links.
+📱 **Tablet showcase:** open **`/showcase`** (or the **"Tablet view"** link in the banner) to use the app inside a tablet bezel — switch between 8.8"/11"/web and rotate, mirroring how it runs in the field.
 👤 **By:** Waranyoo Chuathon · [GitHub](https://github.com/WaranyooChuathon)
 📐 **Architecture:** see [ARCHITECTURE.md](ARCHITECTURE.md)
 
@@ -21,7 +22,7 @@ English · **[ภาษาไทย](README-TH.md)**
 
 ## Overview
 
-StockCheck tracks inventory as **individual serialized assets** (1 row = 1 real item), not as bulk quantities.
+Assay tracks inventory as **individual serialized assets** (1 row = 1 real item), not as bulk quantities.
 Each item has an identity (serial number, category, specs) and a verification state, so a small team can
 walk the shelves, confirm what physically exists against the records, and flag what doesn't.
 
@@ -48,6 +49,7 @@ verification checklist. The demo is seeded across four categories to show this.
 - **Audit log** — every action (import / verify / edit / delete / restore) recorded with who/when, filterable & paginated.
 - **Optimistic locking** — concurrent edits return 409 instead of overwriting.
 - **RBAC** — admin vs staff. **Dark mode**, Thai-time formatting, mobile-first throughout.
+- **Demo presentation** — a persistent, single-viewport (no-scroll) login with a tech-stack logo marquee, and a sticky "Live Demo" banner with a live Neon-connection badge + source links.
 
 ## Tech stack
 
@@ -63,7 +65,7 @@ verification checklist. The demo is seeded across four categories to show this.
 
 ## Data architecture (production vs demo)
 
-StockCheck has a **dual-mode data layer**. Every page calls the same service functions in `src/server/*`;
+Assay has a **dual-mode data layer**. Every page calls the same service functions in `src/server/*`;
 those services switch on `isDemoMode()`:
 
 ```
@@ -81,8 +83,12 @@ so visitor edits never pile up. See [ARCHITECTURE.md](ARCHITECTURE.md).
 ```bash
 npm install
 
-# Quick start — no database needed (in-memory demo data):
-npm run dev          # http://localhost:3000
+# Quick start — guaranteed no database (in-memory demo data, even if a .env with
+# DATABASE_URL exists). Forces DEMO_MOCK=1:
+npm run dev:demo     # http://localhost:3000   (pass flags through: npm run dev:demo -- -p 3001)
+
+# Plain dev — honors .env: in-memory when no DATABASE_URL, real DB when it's set:
+npm run dev
 
 # With a real database:
 cp .env.example .env            # set DATABASE_URL + AUTH_SECRET

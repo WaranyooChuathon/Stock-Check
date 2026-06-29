@@ -38,7 +38,9 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
         </Link>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            {unit.serialNumber ?? (
+            {unit.serialNumber ? (
+              <span className="font-mono">{unit.serialNumber}</span>
+            ) : (
               <span className="text-gray-500 dark:text-gray-400">ยังไม่มี S/N</span>
             )}
           </h1>

@@ -9,7 +9,7 @@
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #020617; /* slate-950 — subtle cool-dark base (was near-black #0a0a0a) */
   --foreground: #ededed;
 }
 
@@ -23,5 +23,35 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Geist (loaded via next/font in layout.tsx, with a metric-matched fallback
+     baked into the var). Previously hard-set to Arial, which silently shadowed
+     the brand font. */
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-kerning: normal;
+}
+
+/* Seamless logo marquee (TechMarquee): the track holds 4 identical copies and is
+   translated by -50% (= 2 copies). The revealed half is always ≥ 2 copies wide, so
+   it never under-fills the viewport (no empty gap before the sequence repeats). Item
+   spacing is baked into each item (padding), so the gap across the wrap stays uniform. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  /* 60s for -50% of a 4-copy track (≈ the old 32s/2-copy per-pixel speed, kept calm
+     now that the logos are 2× larger). */
+  animation: marquee 60s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
 }

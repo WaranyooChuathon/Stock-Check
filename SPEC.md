@@ -1,135 +1,104 @@
-# SPEC — Device-Frame Showcase Mode
+# SPEC — Tech-stack logo marquee on the login page
 
-> Status: draft for review · Feature branch suggestion: `feat/showcase-device-frame`
-> Companion docs: `AGENTS.md` (project guide), `ARCHITECTURE.md`, `PORTFOLIO-SPEC.md`.
+> Status: draft for review · Branch suggestion: `feat/login-tech-marquee`
+> Supersedes the dark-slate SPEC (shipped). Design context: [DESIGN.md](DESIGN.md), [AGENTS.md].
 
 ## 1. Objective
 
-Add a **presentation/showcase mode** that renders the live StockCheck app inside a realistic
-**tablet bezel**, so a portfolio viewer immediately sees how the tool is actually used in the
-field — on a tablet/iPad held by a stock-checker — rather than as a plain desktop website.
+Add a polished **tech-stack logo marquee** at the **bottom of the login page** — a seamless,
+infinitely-scrolling band of the real technologies this project uses, as a portfolio signal to
+recruiters who open the link.
 
-**Target users**
-- Recruiters / hiring managers opening the portfolio link who should grasp the real-world
-  context in one glance.
-- The author (demo driver) presenting the app live and switching device contexts on the fly.
+Modern CSS approach (researched): native `<marquee>` is obsolete; do a **CSS `@keyframes`
+`translateX` loop on a duplicated track** (seamless), with `mask-image` edge fade and a
+`prefers-reduced-motion` fallback. Not scroll-driven animation (that binds to scroll, not auto-play).
 
-**Why a route + iframe (chosen approach):** the inner app stays fully interactive at the *true
-device viewport* (the app's own responsive breakpoints fire as on real hardware), with zero
-changes to existing pages. The wrapper only frames and resizes — it never reimplements app UI.
+**Target users:** recruiters/visitors on the login screen. Presentational only — no behavior/data
+change to auth or the app.
 
-**Out of scope:** real touch-gesture emulation, network throttling, multi-device side-by-side,
-recording/video, changing any existing app page or business logic.
+**Out of scope:** marquees anywhere else; pause-on-hover and a caption label (not requested);
+clickable logos / links.
 
 ## 2. Core features & acceptance criteria
 
-### F1 — Showcase route (`/showcase`)
-- New **public** page at `src/app/showcase/page.tsx` (outside the `(app)` authed group).
-- Renders a centered device frame containing an `<iframe>` pointing at the app root (`/`).
-- The iframe is **same-origin**, so the inner app shares the session; an unauthenticated viewer
-  sees the login page *inside the frame* and can click "🚀 เข้าสู่ Live Demo" there.
-- **AC:** visiting `/showcase` with no session shows the framed login; after entering the demo
-  inside the frame, the framed app navigates normally and stays within the bezel.
+### F1 — Tech marquee component (seamless CSS loop)
+- New `src/components/TechMarquee.tsx` (server component — no client JS needed).
+- Render the stack as brand logos via **`react-icons`** (Simple Icons set), in **real brand colors**.
+- Seamless loop: the logo list is rendered **twice** in one track; the track animates
+  `transform: translateX(0) → translateX(-50%)` via a CSS `@keyframes` (`animation: … linear
+  infinite`). Duplicate is `aria-hidden`.
+- **Edge fade:** `mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent)`
+  so logos fade in/out at both ends.
+- **AC:** logos scroll horizontally in one continuous, seamless loop (no visible jump at wrap);
+  both ends fade out; runs without JS.
 
-### F2 — Device presets (switcher)
-Three presets, selectable via a top toolbar. Sizes are **logical CSS viewport** points
-(starting values — finalize in build):
+### F2 — Brand colors, theme-safe
+- Each logo uses its Simple-Icons brand color. **Monochrome black/near-black marks** (Next.js,
+  Vercel, Prisma) would vanish on the dark slate bg — these adapt to a theme-neutral
+  (gray-900 in light / gray-100 in dark) instead of pure brand black.
+- **AC:** every logo is clearly visible in **both** light and the new slate dark mode (no invisible
+  black-on-dark logo); colored logos (React cyan, TypeScript blue, Postgres blue, etc.) show their
+  brand hue.
 
-| Preset      | Portrait (w×h) | Notes |
-|-------------|----------------|-------|
-| Tablet 8.8" | 820 × 1180     | compact tablet / iPad-mini class |
-| Tablet 11"  | 840 × 1230     | iPad-Pro-11" class |
-| Web         | 100% × 100%    | no bezel, full-width (iframe fills viewport) |
+### F3 — Accessibility / reduced motion
+- `@media (prefers-reduced-motion: reduce)` → **no auto-scroll** (static row; the duplicate hidden or
+  the track centered). The marquee is decorative → wrap in `aria-hidden` (the stack isn't conveyed by
+  the icons alone). Logos still ≥ adequate size; nothing flashes.
+- **AC:** with reduced-motion on, the band is static (no animation) and still looks intentional.
 
-- **AC:** clicking a preset swaps the iframe's rendered viewport size; the inner app reflows to
-  match (verified by the app's mobile vs. wider layout responding).
-- **AC:** "Web" hides the bezel entirely and shows the app edge-to-edge.
+### F4 — Placement at the login bottom
+- Restructure login `main` to a column: existing card group stays vertically centered (`flex-1`),
+  the marquee sits as a **full-width band pinned at the bottom** (subtle `border-t`, padding).
+- **AC:** the login card remains centered; the marquee spans the width at the bottom on desktop and
+  mobile (375px) without overflowing; light + dark both correct.
 
-### F3 — Orientation toggle (portrait ↔ landscape)
-- A rotate button swaps width/height for the active tablet preset. Disabled/hidden for "Web".
-- **AC:** rotating 8.8"/11" swaps dimensions and the frame visibly re-orients; inner app reflows.
-
-### F4 — Fit-to-screen scaling
-- When a device's logical size is taller/wider than the available viewport, the whole frame is
-  uniformly down-scaled (CSS `transform: scale()`) so it always fits without page scrollbars,
-  preserving aspect ratio. The iframe's internal logical size is unchanged (app still believes
-  it has the full device viewport).
-- **AC:** on a laptop screen the 11" portrait frame fits fully on screen with no clipping.
-
-### F5 — Entry points
-- **Login page:** a secondary link/button "📱 ดูแบบ Tablet" → `/showcase`.
-- **DemoBanner:** a "📱 Tablet view" link (alongside GitHub / Resume) → `/showcase`.
-- **AC:** both links navigate to `/showcase`; the banner link is visible on every app page.
-
-### F6 — Mobile-first & dark mode (project convention)
-- The showcase chrome (toolbar, bezel, background) supports light/dark via `dark:` variants and
-  is usable on a phone (controls wrap, touch targets ≥44px).
-- **AC:** toggling theme restyles the showcase chrome; toolbar usable at 375px width.
+### Tech set (confirm exact availability in `react-icons/si` at build; drop/substitute any missing)
+Next.js · React · TypeScript · Tailwind CSS · Prisma · PostgreSQL · Zod · Vitest · Vercel
+(+ Auth.js if an icon exists). ~8–10 marks.
 
 ### Non-functional
-- **Zero-config / demo-mode safe:** the wrapper adds no data layer; it works in `isDemoMode()`
-  exactly as in DB mode (it only frames existing routes). No new `src/server/*` service.
-- **No new dependencies** — pure React 19 + Tailwind 4 + CSS transforms.
-- State (active device + orientation) may persist in URL query (`?device=11&o=landscape`) so a
-  specific framed view is shareable; default = 11" portrait. (URL-state is a nice-to-have; local
-  component state is acceptable for v1 if URL sync adds risk.)
+- **New dependency: `react-icons`** (approved) — import only the specific `Si*` icons (tree-shaken).
+- No change to auth/data/logic. GPU-friendly (`transform` only; consider `will-change: transform`).
 
-## 3. Project structure (additions only)
+## 3. Project structure
 
 ```
 src/
-  app/
-    showcase/
-      page.tsx              # public wrapper page (server component shell)
-      ShowcaseFrame.tsx     # 'use client' — toolbar + bezel + iframe + scaling
-      devices.ts            # DEVICE_PRESETS (id, label, width, height, type)
-  proxy.ts                  # MODIFY matcher: exclude `showcase` (make route public)
-  app/(auth)/login/page.tsx # MODIFY: add "ดูแบบ Tablet" link
-  components/DemoBanner.tsx  # MODIFY: add "Tablet view" link
-tests/
-  unit/showcase-devices.test.ts   # preset + orientation pure helpers
+  components/TechMarquee.tsx   # NEW — RSC; react-icons brand logos, duplicated track, mask fade
+  app/globals.css             # MODIFY — @keyframes marquee (+ small utility/classes)
+  app/(auth)/login/page.tsx   # MODIFY — column layout; <TechMarquee/> as bottom band
+package.json                  # MODIFY — add react-icons
 ```
-
-- `devices.ts` exposes pure helpers (`getPreset(id)`, `rotate(dims)`, `fitScale(dims, viewport)`)
-  so the geometry logic is unit-testable without a DOM.
-- `ShowcaseFrame.tsx` is the only client component; `page.tsx` stays a thin server shell.
 
 ## 4. Code style
 
-- Follow `AGENTS.md`: **UI text Thai, code/comments English**; mobile-first; `dark:` on every
-  surface; touch targets ≥44px.
-- Thin page → logic in helpers (mirror the server-service pattern, but client-side geometry here).
-- TypeScript strict; no `any`. Device presets typed via a `DevicePreset` union/const.
-- Tailwind utility classes (no new CSS files); scaling via inline `style` for the dynamic
-  `transform`/dimensions only.
-- Reuse existing tokens/colors from the app's palette for visual consistency.
+- Follow AGENTS.md/DESIGN.md: Thai UI / English code; mobile-first; `dark:` everywhere; calm,
+  restrained (the marquee is a quiet accent, not loud). Tailwind utilities; keyframes live in
+  `globals.css`. Brand colors are the one allowed exception to the app palette (they're logos).
+- TypeScript strict; `TechMarquee` data = a typed array of `{ name, Icon, color }`.
 
 ## 5. Testing strategy
 
-- **Unit (Vitest, no DB):** `devices.ts` helpers — `rotate()` swaps w/h; `fitScale()` returns
-  ≤1 and preserves aspect ratio; `getPreset()` returns the correct preset / falls back to default.
-- **Type/lint gate:** `npm run typecheck` + `npm run lint` clean.
-- **Manual / browser:** load `/showcase`, verify each preset + rotation reflows the framed app,
-  fit-to-screen has no clipping, both entry-point links work, light/dark + 375px width OK.
-  (Optional: Chrome DevTools MCP screenshot per preset for the README.)
-- No integration/DB test needed — feature touches no data layer.
+- Presentational — no unit tests; existing tests stay green.
+- Gates: `npm run typecheck` / `lint` / `build` clean (build also proves the `react-icons` imports
+  resolve).
+- **Manual (via `npm run dev:demo`):** login page — seamless scroll, no wrap jump, edge fade;
+  toggle dark/light (all logos visible, black marks adapt); 375px width; emulate reduced-motion
+  (static). Before/after screenshots → `.screenshots/`. Kill the dev server when done.
 
 ## 6. Boundaries
 
 **Always**
-- Keep it **company-safe**: synthetic data only; the frame just wraps the existing demo.
-- Preserve demo-mode (`isDemoMode()`) behavior; the wrapper must work with no DB / no env.
-- Keep existing app pages untouched except the two small link additions (login + banner).
-- Add the matching mock branch only if a `src/server/*` service is introduced (none planned).
+- Keep auth/login behavior, copy, and the rest of the page intact; this is an additive band.
+- Ensure reduced-motion + both-theme visibility; keep it calm (decorative `aria-hidden`).
+- Company-safe: these are public tech-brand logos of the actual stack (no company/client marks).
 
 **Ask first**
-- Before adding any new dependency (e.g. a device-mockup library) — default is hand-rolled CSS.
-- Before persisting showcase state anywhere beyond URL query / local component state.
-- Before changing `proxy.ts` matcher semantics beyond excluding `/showcase`.
+- Before adding any dependency **beyond** the approved `react-icons`.
+- Before making logos clickable/links, adding a caption, or pause-on-hover (not in scope).
 
 **Never**
-- Never add real names/serials/locations/emails.
-- Never commit `.env`/secrets/tokens.
+- Never add real company/client branding or data; never commit `.env`/secrets.
+- Never ship an animation without a `prefers-reduced-motion` fallback.
 - Never auto-commit / push / deploy — the user commits themselves.
-- Never alter business logic, RBAC, or the data layer to serve the showcase.
 ```

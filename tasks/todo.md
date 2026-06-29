@@ -1,38 +1,28 @@
-# TODO — Device-Frame Showcase Mode
+# TODO — Tech-stack logo marquee (login) ✅ DONE
 
-Plan: `tasks/plan.md` · Spec: `SPEC.md` · Branch: `feat/showcase-device-frame`
+Plan: `tasks/plan.md` · Spec: `SPEC.md` · Branch: `feat/login-tech-marquee`
 
-## Phase A — Geometry core
-- [x] **T1** `src/app/showcase/devices.ts` — `DevicePreset` type, `DEVICE_PRESETS`
-      (8.8"=820×1180, 11"=840×1230, web=full), `getPreset`, `rotate`, `fitScale`, defaults.
-- [x] **T1** `tests/unit/showcase-devices.test.ts` — getPreset/fallback, rotate swap,
-      fitScale ≤1 + aspect-ratio preserved. (12 tests passing)
-- [x] ◆ Checkpoint A: `npm run test -- showcase-devices` + `typecheck` green.
+- [x] **T1** `react-icons` installed (^5.6.0); verified `Si*` exports. Auth.js has no icon → dropped;
+      final set = 9 (Next.js, React, TypeScript, Tailwind, Prisma, PostgreSQL, Zod, Vitest, Vercel).
+- [x] **T2** `globals.css` — `@keyframes marquee` (translateX 0→-50%) + `.animate-marquee` (32s
+      linear infinite) + `prefers-reduced-motion` → animation:none.
+- [x] **T3** `src/components/TechMarquee.tsx` (RSC) — duplicated 2-copy track, per-item padding
+      (uniform wrap), mask-image edge fade, brand colors; Next.js/Vercel/Prisma theme-adaptive ink;
+      wrapper aria-hidden.
+- [x] **T4** `login/page.tsx` — main → column; card centered (flex-1); `<TechMarquee/>` bottom band.
+- [x] **T5** Verified via `npm run dev:demo` (isolated /login): animation marquee 32s, 2 copies,
+      9 logos, React brand cyan, Next.js adapts to near-white on dark, mask fade applied.
+      Screenshot `.screenshots/login-marquee-AFTER.png`. Server killed.
+- [x] ◆ Final: typecheck + lint + build green; ready to commit.
 
-## Phase B — Client frame
-- [x] **T2** `src/app/showcase/ShowcaseFrame.tsx` (`'use client'`) — toolbar (presets + rotate),
-      tablet bezel + `<iframe src="/">`, resize-aware `fitScale` transform, web = no bezel.
-- [x] ◆ Checkpoint B: `typecheck` + `lint` clean.
+Note: brand hex colors in TechMarquee are flagged by the impeccable design hook (outside DESIGN.md
+palette) — intentional/by-design (real logo colors, user-confirmed). Optional: persist with
+`/impeccable hooks ignore-file "src/components/TechMarquee.tsx"`.
 
-## Phase C — Public route
-- [x] **T3** `src/app/showcase/page.tsx` — thin server shell rendering `<ShowcaseFrame />`.
-- [x] **T3** `src/proxy.ts` — add `showcase` to matcher exclusion (make route public).
-- [x] **T3** `src/components/BannerGate.tsx` + layout — hide outer DemoBanner on /showcase
-      (avoid double banner / overflow). ShowcaseFrame uses `h-dvh` + stage `min-h-0` for fit-scale.
-- [x] ◆ Checkpoint C: verified in browser — public framed login, 3 presets + rotate + fit-to-screen,
-      demo-enter inside frame → authed dashboard stays in bezel; typecheck/lint/build green.
-
-## Phase D — Entry points
-- [x] **T4** `src/app/(auth)/login/page.tsx` — add "📱 ดูแบบ Tablet" → `/showcase`.
-- [x] **T5** `src/components/DemoBanner.tsx` — add "📱 Tablet view" → `/showcase`.
-- [x] ◆ Checkpoint D: both links verified in browser → `/showcase`.
-
-## Phase E — Polish & verify
-- [x] **T6** Manual sweep done in browser: 3 presets + rotate reflow ✓, 11" fit-no-clip ✓,
-      both entry links ✓, banner on every page ✓, toolbar usable at 375px ✓. README "Tablet
-      showcase" note added. (Light-mode classes present; not OS-forced.)
-- [x] ◆ Checkpoint E: unit tests pass + `build` compiled; 7 failing tests are pre-existing
-      integration (need local Postgres), unrelated to this feature. Ready for user to commit.
-
-## Deferred / optional
-- [ ] URL state `?device=&o=` for shareable framed views (SPEC nice-to-have, post-v1).
+## Follow-up (2026-06-28): bigger + gap fix
+- [x] **2× size** — icons h-5→h-10, text-sm→text-lg, px-7→px-14, py-4→py-8, gap-2→gap-3.
+- [x] **Gap-after-Vercel fix** — root cause: with 2 copies, one copy was narrower than wide
+      viewports, so translateX(-50%) revealed empty space (~5s) before the loop repeated.
+      Fix: render 4 copies; -50% now reveals 2 copies (always ≥ viewport) → seamless on any width.
+- [x] **Duration** 32s → 60s (track distance doubled; keeps the same calm per-pixel speed).
+- [x] typecheck + lint green.

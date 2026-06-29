@@ -172,13 +172,13 @@ export function UnitsTable({ units, isAdmin = false }: { units: UnitListItem[]; 
                 <td className="px-3 py-2 font-medium whitespace-nowrap">
                   <Link
                     href={`/units/${u.id}`}
-                    className="text-blue-600 hover:underline dark:text-blue-400"
+                    className="font-mono text-blue-600 hover:underline dark:text-blue-400"
                   >
-                    {u.serialNumber ?? <span className={cellMuted}>ยังไม่มี S/N</span>}
+                    {u.serialNumber ?? <span className={`font-sans ${cellMuted}`}>ยังไม่มี S/N</span>}
                   </Link>
                 </td>
-                <td className="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
-                  {u.boxSerialNumber ?? <span className={cellMuted}>—</span>}
+                <td className="px-3 py-2 font-mono whitespace-nowrap text-gray-700 dark:text-gray-300">
+                  {u.boxSerialNumber ?? <span className={`font-sans ${cellMuted}`}>—</span>}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
                   {u.category ?? <span className={cellMuted}>—</span>}

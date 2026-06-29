@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'StockCheck — ตรวจนับสต็อก',
+  title: 'Assay — Check Stock · ตรวจนับสต็อก',
   description: 'ระบบตรวจนับ/ยืนยันทรัพย์สินรายตัว (generic asset tracker)',
 };
 

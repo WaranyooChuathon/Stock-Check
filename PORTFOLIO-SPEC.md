@@ -18,7 +18,7 @@
 4. **กดเล่นได้ทันที** — ปุ่ม "เข้าสู่ Live Demo" 1 คลิก (คงหน้า login โชว์)
 5. **Dual-mode data layer (จุดขาย architecture)** — มี `DATABASE_URL`=Prisma จริง / ไม่มี=deterministic mock (CI/local รันได้ไม่ต้อง config)
 6. **รักษาข้อมูล demo** — ปุ่ม "Reset demo" + cron re-seed
-7. **Company-safe 100%** — repo ใหม่ · Neon บัญชีส่วนตัวใหม่ · ข้อมูลสมมติ · ไม่มีชื่อ/แบรนด์/credential จริง
+7. **Company-safe 100%** — repo ใหม่ · Neon บัญชีส่วนตัวใหม่ · ข้อมูลตัวอย่างเพื่อการสาธิต · ไม่มีชื่อ/แบรนด์/credential จริง
 8. **โชว์ได้** — README case-study 2 ภาษา + screenshots + demo banner
 
 ### กลุ่มผู้ใช้ (target)
