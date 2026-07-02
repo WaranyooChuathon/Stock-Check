@@ -1,4 +1,4 @@
-# Assay — Serialized Asset Tracker (Live Demo)
+# Assay — Check Stock · Serialized Asset Tracker (Live Demo)
 
 English · **[ภาษาไทย](README-TH.md)**
 
@@ -16,9 +16,13 @@ English · **[ภาษาไทย](README-TH.md)**
 
 ## Screenshots
 
-| Item list (cards) | Item detail + verify |
+| Login — instant demo access | Home — dashboard |
 |:--:|:--:|
-| ![Items](docs/screenshots/units-list.png) | ![Detail](docs/screenshots/unit-detail.png) |
+| ![Login](docs/screenshots/login.png) | ![Home](docs/screenshots/home.png) |
+
+| Item list — card view | Item detail + verify |
+|:--:|:--:|
+| ![Item list](docs/screenshots/units-list.png) | ![Item detail](docs/screenshots/unit-detail.png) |
 
 ## Overview
 
